@@ -55,6 +55,8 @@ template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
 
 registration_hour_freqs = Hash.new(0)
+registration_day_freqs = Hash.new(0)
+puts 'Phone numbers:'
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
@@ -62,7 +64,9 @@ contents.each do |row|
   phone_number = clean_phone_number(row[:homephone])
   date_and_hour = DateTime.strptime(row[:regdate], "%m/%d/%Y %H")
 
+  puts phone_number
   registration_hour_freqs[date_and_hour.hour] += 1
+  registration_day_freqs[Date::DAYNAMES[date_and_hour.wday]] += 1
 
   legislators = legislators_by_zipcode(zipcode)
 
@@ -72,3 +76,4 @@ contents.each do |row|
 end
 
 puts "Peak registration hour: #{registration_hour_freqs.key(registration_hour_freqs.values.max)}"
+puts "Peak registration day: #{registration_day_freqs.key(registration_day_freqs.values.max)}"
